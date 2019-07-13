@@ -10,7 +10,7 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
     
-    let itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+    var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,7 +28,7 @@ class TodoListViewController: UITableViewController {
     
     // numebr of rows in the table view
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return itemArray.count
     }
     
     // MARK - TableView Delegate Methods
@@ -50,6 +50,43 @@ class TodoListViewController: UITableViewController {
         // the row flashes gray briefly and then goes back to be deselected
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    // MARK - Add new items section
+    
+    // triggers when the plus button is pressed
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        
+        // local variable of whatever the user typed in the textfield
+        var textField = UITextField()
+        
+        // create an alert
+        let alert = UIAlertController(title: "Add new Todoey item", message: "", preferredStyle: .alert)
+        
+        // button action that will be added to the altert
+        let action = UIAlertAction(title: "Add item", style: .default) { (action) in
+            // what will happen once the user click the add item button on the UIAlert
+            self.itemArray.append(textField.text!)
+            
+            // reload the TableView to present the new data
+            // THIS ACTION IS MANDATORY
+            self.tableView.reloadData()
+            
+        }
+        
+        // add the textfield to the alert
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create new item"
+            textField = alertTextField
+        }
+        
+        // add the action to the alert
+        alert.addAction(action)
+        
+        // present the alert
+        present(alert, animated: true, completion: nil)
+        
+    }
+    
 
 
 }
