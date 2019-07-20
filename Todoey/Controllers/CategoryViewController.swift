@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
     
     // the realm
     let realm = try! Realm()
@@ -20,6 +20,9 @@ class CategoryViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // make the cells 80 points height
+        tableView.rowHeight = 80.0
+        
         loadCategories()
     }
     
@@ -27,8 +30,9 @@ class CategoryViewController: UITableViewController {
     
     // how the cell look like
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // create the cell for the specific identifier
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        
+        // cell that was created into the super class
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         // set the cell with the data grabbed
         cell.textLabel?.text = categoryArray?[indexPath.row].name ?? "No categories added yet"
@@ -96,6 +100,22 @@ class CategoryViewController: UITableViewController {
     func loadCategories() {
         categoryArray = realm.objects(Category.self)
         tableView.reloadData()
+    }
+    
+    // MARK: - Delete data from swipe
+    
+    override func updateModel(at indexPath: IndexPath) {
+        // Update the model
+        if let categoryForDeletion = self.categoryArray?[indexPath.row] {
+            do {
+                // delete item
+                try self.realm.write {
+                    self.realm.delete(categoryForDeletion)
+                }
+            } catch {
+                print("Error in deleting item, \(error)")
+            }
+        }
     }
     
     // MARK: - TableView Delegate Methods
