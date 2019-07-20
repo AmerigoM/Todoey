@@ -20,9 +20,6 @@ class CategoryViewController: SwipeTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // make the cells 80 points height
-        tableView.rowHeight = 80.0
-        
         loadCategories()
     }
     
@@ -99,6 +96,7 @@ class CategoryViewController: SwipeTableViewController {
     
     func loadCategories() {
         categoryArray = realm.objects(Category.self)
+        categoryArray = categoryArray?.sorted(byKeyPath: "name", ascending: true)
         tableView.reloadData()
     }
     
@@ -110,6 +108,7 @@ class CategoryViewController: SwipeTableViewController {
             do {
                 // delete item
                 try self.realm.write {
+                    self.realm.delete(categoryForDeletion.items)
                     self.realm.delete(categoryForDeletion)
                 }
             } catch {
